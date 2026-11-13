@@ -1,122 +1,113 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState, useRef, useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AppProvider, useApp } from './context/AppContext';
+import Navbar from './components/Navbar';
+import SmartAssistant from './components/SmartAssistant';
+import { Sparkles, Code, Terminal, CheckCircle2 } from 'lucide-react';
 
-function App() {
-  const [count, setCount] = useState(0)
-
+// الصفحة الرئيسية
+function Home() {
+  const { t } = useApp();
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
+    <div className="container" style={{ paddingBlock: '3rem' }}>
+      <section className="glow-box" style={{ padding: '3rem', textAlign: 'center', marginBottom: '2rem' }}>
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem', color: 'var(--primary)' }}>
+          {t('heroTitle')}
+        </h1>
+        <p style={{ color: 'var(--muted)', fontSize: '1.1rem', maxWidth: '700px', marginInline: 'auto', marginBottom: '1.5rem' }}>
+          {t('heroText')}
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          <span className="glow-box" style={{ padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem' }}>
+            <Code size={18} color="var(--primary)" /> React + Vite
+          </span>
+          <span className="glow-box" style={{ padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.9rem' }}>
+            <Terminal size={18} color="var(--accent-yellow)" /> Node.js &amp; MongoDB
+          </span>
         </div>
       </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
+        <div className="glow-box lift" style={{ padding: '1.5rem' }}>
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', color: 'var(--primary)' }}>
+            <Sparkles size={20} /> {t('skill1Title')}
+          </h3>
+          <p style={{ color: 'var(--muted)', fontSize: '0.95rem' }}>{t('skill1Text')}</p>
+        </div>
+        <div className="glow-box lift" style={{ padding: '1.5rem' }}>
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', color: 'var(--accent-red)' }}>
+            <CheckCircle2 size={20} /> {t('skill2Title')}
+          </h3>
+          <p style={{ color: 'var(--muted)', fontSize: '0.95rem' }}>{t('skill2Text')}</p>
+        </div>
+      </section>
+    </div>
+  );
 }
 
-export default App
+// صفحة "لا شيء" (السر 2): فارغة، والنص يظهر بعد ضغط مطوّل 5 ثوانٍ
+function NothingPage() {
+  const { t } = useApp();
+  const [revealed, setRevealed] = useState(false);
+  const timerRef = useRef(null);
+
+  const startHold = () => {
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      setRevealed(true);
+      try {
+        localStorage.setItem('secret2', 'found');
+      } catch {
+        // نتجاهل الخطأ
+      }
+    }, 5000);
+  };
+
+  const cancelHold = () => clearTimeout(timerRef.current);
+
+  // تنظيف المؤقت عند مغادرة الصفحة
+  useEffect(() => () => clearTimeout(timerRef.current), []);
+
+  return (
+    <div
+      onPointerDown={startHold}
+      onPointerUp={cancelHold}
+      onPointerLeave={cancelHold}
+      onPointerCancel={cancelHold}
+      onContextMenu={(e) => e.preventDefault()}
+      style={{
+        minHeight: '70vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        userSelect: 'none',
+        WebkitTouchCallout: 'none',
+      }}
+    >
+      {revealed && (
+        <p style={{ color: 'var(--primary)', fontSize: '1.5rem', fontWeight: '700', textAlign: 'center', padding: '1rem' }}>
+          {t('secret2Found')}
+        </p>
+      )}
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AppProvider>
+      <BrowserRouter>
+        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+          <Navbar />
+          <main style={{ flex: 1 }}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/nothing" element={<NothingPage />} />
+            </Routes>
+          </main>
+          <SmartAssistant />
+        </div>
+      </BrowserRouter>
+    </AppProvider>
+  );
+}
