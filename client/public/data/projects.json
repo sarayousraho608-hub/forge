@@ -1,0 +1,59 @@
+[
+  {
+    "id": 1, "status": "past", "progress": 100, "start": "2026-06-01", "end": "2026-07-15",
+    "title": { "ar": "✏️ مشروع منجَز", "en": "✏️ A finished project" },
+    "desc": { "ar": "اكتبي هنا وصفاً قصيراً للمشروع.", "en": "Write a short description of the project here." },
+    "tags": ["React", "CSS"], "image": "",
+    "details": {
+      "done": { "ar": ["✏️ ما أنجزتِه في هذا المشروع"], "en": ["✏️ What you did in this project"] },
+      "todo": { "ar": [], "en": [] },
+      "problems": { "ar": [], "en": [] },
+      "tech": { "ar": ["React", "CSS"], "en": ["React", "CSS"] }
+    }
+  },
+  {
+    "id": 2, "status": "past", "progress": 100, "start": "2026-03-01", "end": "2026-04-20",
+    "title": { "ar": "✏️ مشروع منجَز آخر", "en": "✏️ Another finished project" },
+    "desc": { "ar": "وصف قصير آخر.", "en": "Another short description." },
+    "tags": ["JavaScript"], "image": "",
+    "details": {
+      "done": { "ar": ["✏️ ..."], "en": ["✏️ ..."] },
+      "todo": { "ar": [], "en": [] },
+      "problems": { "ar": [], "en": [] },
+      "tech": { "ar": ["JavaScript"], "en": ["JavaScript"] }
+    }
+  },
+  {
+    "id": 3, "status": "current", "progress": 40, "start": "2026-11-13", "end": "2026-11-17",
+    "title": { "ar": "موقع ITC Forge", "en": "ITC Forge website" },
+    "desc": { "ar": "هذا الموقع نفسه: واجهة React وخادم Express وذكاء اصطناعي.", "en": "This very site: React frontend, Express backend and AI." },
+    "tags": ["React", "Node.js", "MongoDB"], "image": "",
+    "details": {
+      "done": {
+        "ar": ["بناء الواجهة كاملة بالعربية والإنجليزية", "المظهر الفاتح والداكن", "صفحة الأسرار والجائزة"],
+        "en": ["Built the full frontend in Arabic and English", "Light and dark themes", "Secrets and prize page"]
+      },
+      "todo": {
+        "ar": ["الخادم وقاعدة البيانات", "المساعد الذكي", "النشر"],
+        "en": ["Server and database", "The AI assistant", "Deployment"]
+      },
+      "problems": {
+        "ar": ["✏️ اكتبي مشكلة لم تُحل بعد"],
+        "en": ["✏️ Write a problem not solved yet"]
+      },
+      "tech": { "ar": ["Express", "MongoDB Atlas", "Gemini API", "Vercel و Render"], "en": ["Express", "MongoDB Atlas", "Gemini API", "Vercel & Render"] }
+    }
+  },
+  {
+    "id": 4, "status": "future", "progress": 0, "start": "2027-01-10", "end": "2027-03-01",
+    "title": { "ar": "✏️ مشروع قادم", "en": "✏️ An upcoming project" },
+    "desc": { "ar": "فكرة تخططين لها.", "en": "An idea you are planning." },
+    "tags": ["Next.js"], "image": "",
+    "details": {
+      "done": { "ar": [], "en": [] },
+      "todo": { "ar": ["✏️ الخطوات المخطط لها"], "en": ["✏️ Planned steps"] },
+      "problems": { "ar": [], "en": [] },
+      "tech": { "ar": ["Next.js"], "en": ["Next.js"] }
+    }
+  }
+]

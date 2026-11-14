@@ -1,0 +1,14 @@
+[
+  { "id": 1, "status": "good", "name": "React", "group": "Frontend", "level": 80 },
+  { "id": 2, "status": "good", "name": "JavaScript", "group": "Frontend", "level": 85 },
+  { "id": 3, "status": "good", "name": "HTML & CSS", "group": "Frontend", "level": 90 },
+  { "id": 4, "status": "good", "name": { "ar": "✏️ مهارة أتقنها", "en": "✏️ A skill I know" }, "group": "—", "level": 70 },
+
+  { "id": 5, "status": "learning", "name": "Node.js", "group": "Backend", "level": 55 },
+  { "id": 6, "status": "learning", "name": "Express", "group": "Backend", "level": 50 },
+  { "id": 7, "status": "learning", "name": "MongoDB", "group": "Database", "level": 45 },
+  { "id": 8, "status": "learning", "name": { "ar": "✏️ مهارة أتعلمها", "en": "✏️ A skill I am learning" }, "group": "—", "level": 30 },
+
+  { "id": 9, "status": "planned", "name": "TypeScript", "group": "Frontend", "level": 5 },
+  { "id": 10, "status": "planned", "name": { "ar": "✏️ مهارة سأتعلمها", "en": "✏️ A skill I will learn" }, "group": "—", "level": 0 }
+]

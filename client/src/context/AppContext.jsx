@@ -1,46 +1,45 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { translations } from '../translations';
+import translations from '../translations';
 
-const AppContext = createContext();
+const AppContext = createContext(null);
 
-// قراءة قيمة محفوظة بأمان (قد يفشل localStorage في بعض الحالات)
-function readSaved(key, allowed, fallback) {
+// قراءة قيمة محفوظة بأمان
+function readSaved(key, fallback) {
   try {
-    const value = localStorage.getItem(key);
-    return allowed.includes(value) ? value : fallback;
+    return localStorage.getItem(key) || fallback;
   } catch {
     return fallback;
   }
 }
 
 export function AppProvider({ children }) {
-  const [theme, setTheme] = useState(() => readSaved('theme', ['light', 'dark'], 'dark'));
-  const [lang, setLang] = useState(() => readSaved('lang', ['ar', 'en'], 'ar'));
-
-  const toggleTheme = () => setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
-  const toggleLang = () => setLang(prev => (prev === 'ar' ? 'en' : 'ar'));
-
-  // دالة الترجمة: t('heroTitle')
-  const t = (key) => translations[lang][key] ?? key;
+  const [theme, setTheme] = useState(() => readSaved('theme', 'light'));
+  const [lang, setLang] = useState(() => readSaved('lang', 'ar'));
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
-    document.documentElement.setAttribute('lang', lang);
+    const html = document.documentElement;
+    html.setAttribute('data-theme', theme);
+    html.setAttribute('lang', lang);
+    html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
     try {
       localStorage.setItem('theme', theme);
       localStorage.setItem('lang', lang);
     } catch {
-      // نتجاهل الخطأ: الموقع يعمل بدون حفظ
+      /* التخزين غير متاح */
     }
   }, [theme, lang]);
 
+  const toggleTheme = () => setTheme((x) => (x === 'light' ? 'dark' : 'light'));
+  const toggleLang = () => setLang((x) => (x === 'ar' ? 'en' : 'ar'));
+  const t = (key) => translations[lang][key] ?? key;
+
   return (
-    <AppContext.Provider value={{ theme, toggleTheme, lang, toggleLang, t }}>
+    <AppContext.Provider value={{ theme, lang, toggleTheme, toggleLang, t }}>
       {children}
     </AppContext.Provider>
   );
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
-export const useApp = () => useContext(AppContext);
+export function useApp() {
+  return useContext(AppContext);
+}

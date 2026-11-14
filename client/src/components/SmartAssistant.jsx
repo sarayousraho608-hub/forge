@@ -1,150 +1,109 @@
-import { useState } from 'react';
-import { X, Send, Sparkles } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-
-const bubbleStyle = (role) => ({
-  alignSelf: role === 'user' ? 'flex-end' : 'flex-start',
-  background: role === 'user' ? 'var(--primary)' : 'var(--border)',
-  color: role === 'user' ? '#fff' : 'var(--ink)',
-  padding: '8px 12px',
-  borderRadius: '8px',
-  fontSize: '0.85rem',
-  maxWidth: '85%',
-});
+import { unlockSecret } from '../hooks/useSecrets';
+import { playSend, playReply } from '../sound';
 
 export default function SmartAssistant() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([]);
+  const { t, theme } = useApp();
+  const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
-  const { t } = useApp();
+  const [messages, setMessages] = useState([]);
+  const [typing, setTyping] = useState(false);
+  const listRef = useRef(null);
+  const timers = useRef([]);
 
-  const handleSend = (e) => {
+  // ينزل تلقائياً لآخر رسالة
+  useEffect(() => {
+    const el = listRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [messages, typing, open]);
+
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
+
+  const toggle = () => {
+    // السر الأول: فتح المساعد (ذو النظارة) أثناء المظهر الساطع
+    if (!open && theme === 'light') unlockSecret('sunglasses');
+    setOpen(!open);
+  };
+
+  const send = (e) => {
     e.preventDefault();
     const text = input.trim();
     if (!text) return;
-
-    setMessages((prev) => [...prev, { role: 'user', content: text }]);
+    playSend();
+    setMessages((m) => [...m, { from: 'me', text }]);
     setInput('');
-
-    // رد تجريبي محلي (Mock AI) يعمل بدون إنترنت. سيُستبدل لاحقاً بطلب إلى الخادم
-    setTimeout(() => {
-      setMessages((prev) => [...prev, { role: 'assistant', content: t('mockReply') }]);
-    }, 600);
+    setTyping(true);
+    // غداً: هنا نستدعي الخادم (POST /api/chat) بدل الرد التجريبي
+    timers.current.push(setTimeout(() => {
+      setTyping(false);
+      setMessages((m) => [...m, { from: 'bot', text: t('mockReply') }]);
+      playReply();
+    }, 700));
   };
 
-  return (
-    <div style={{ position: 'fixed', bottom: '24px', insetInlineStart: '24px', zIndex: 1000 }}>
-      {/* الشخصية في طرف الشاشة (إيموجي مؤقتاً) */}
-      {!isOpen && (
-        <button
-          type="button"
-          onClick={() => setIsOpen(true)}
-          className="glow-box"
-          aria-label={t('chatOpen')}
-          title={t('chatOpenTitle')}
-          style={{
-            cursor: 'pointer',
-            padding: '12px',
-            borderRadius: '50%',
-            background: 'var(--surface)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: '2px solid var(--primary)',
-            position: 'relative',
-          }}
-        >
-          <span style={{ fontSize: '24px' }}>😎</span>
-          <span
-            style={{
-              position: 'absolute',
-              top: '-5px',
-              insetInlineEnd: '-5px',
-              background: 'var(--accent-red)',
-              borderRadius: '50%',
-              width: '12px',
-              height: '12px',
-            }}
-          />
-        </button>
-      )}
+  const fab = {
+    position: 'fixed', insetInlineEnd: '1.2rem', bottom: '1.2rem', zIndex: 80,
+    width: 60, height: 60, borderRadius: '50%', fontSize: '1.9rem',
+    background: 'var(--surface)', border: '3px solid var(--primary)',
+    boxShadow: '5px 5px 0 var(--accent-yellow)',
+  };
+  const win = {
+    position: 'fixed', insetInlineEnd: '1.2rem', bottom: '5.5rem', zIndex: 80,
+    width: 'min(340px, 90vw)', height: 'min(460px, 70vh)', display: 'flex', flexDirection: 'column',
+    overflow: 'hidden', color: 'var(--ink)',
+  };
+  const head = {
+    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+    padding: '0.7rem 1rem', background: 'var(--grad)', color: '#fff', fontWeight: 700,
+  };
+  const bubble = (mine) => ({
+    alignSelf: mine ? 'flex-end' : 'flex-start', maxWidth: '85%',
+    padding: '0.45rem 0.8rem', borderRadius: 14, fontSize: '0.95rem',
+    background: mine ? 'var(--primary)' : 'var(--bg-2)',
+    color: mine ? '#fff' : 'var(--ink)',
+    border: '1px solid var(--border)',
+  });
 
-      {/* نافذة الشات */}
-      {isOpen && (
-        <div
-          className="glow-box"
-          style={{
-            width: '320px',
-            maxWidth: 'calc(100vw - 48px)',
-            height: '400px',
-            background: 'var(--surface)',
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
-            border: '1px solid var(--primary)',
-          }}
-        >
-          {/* رأس الشات */}
-          <div
-            style={{
-              background: 'var(--primary)',
-              color: '#fff',
-              padding: '12px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Sparkles size={18} />
-              <span style={{ fontWeight: '600', fontSize: '0.95rem' }}>😎 {t('chatTitle')}</span>
-            </div>
-            <button
-              onClick={() => setIsOpen(false)}
-              aria-label={t('chatClose')}
-              style={{ background: 'transparent', color: '#fff', cursor: 'pointer' }}
-            >
-              <X size={18} />
+  return (
+    <>
+      <button style={fab} className="lift" onClick={toggle}
+        title={t('chatOpenTitle')} aria-label={t('chatOpenTitle')}>
+        {t('chatOpen')}
+      </button>
+
+      {open && (
+        <div className="glow-box" style={win} role="dialog" aria-label={t('chatTitle')}>
+          <div style={head}>
+            <span>{t('chatTitle')}</span>
+            <button onClick={() => setOpen(false)}
+              style={{ background: 'none', border: 'none', color: '#fff', fontWeight: 700 }}>
+              {t('chatClose')}
             </button>
           </div>
 
-          {/* الرسائل */}
-          <div style={{ flex: 1, padding: '12px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <div style={bubbleStyle('assistant')}>{t('chatGreeting')}</div>
-            {messages.map((m, idx) => (
-              <div key={idx} style={bubbleStyle(m.role)}>
-                {m.content}
-              </div>
+          <div ref={listRef} className="chat-msgs"
+            style={{ padding: '0.8rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1, minHeight: 0 }}>
+            <div className="chat-bubble" style={bubble(false)}>{t('chatGreeting')}</div>
+            {messages.map((m, i) => (
+              <div key={i} className="chat-bubble" style={bubble(m.from === 'me')}>{m.text}</div>
             ))}
+            {typing && <div className="chat-bubble" style={bubble(false)}>…</div>}
           </div>
 
-          {/* صندوق الإدخال */}
-          <form onSubmit={handleSend} style={{ display: 'flex', borderTop: '1px solid var(--border)', padding: '8px' }}>
+          <form onSubmit={send} style={{ display: 'flex', gap: '0.4rem', padding: '0.6rem', borderTop: '1px solid var(--border)' }}>
             <input
-              type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={t('chatPlaceholder')}
-              style={{
-                flex: 1,
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--ink)',
-                padding: '6px',
-                outline: 'none',
-                fontFamily: 'inherit',
-              }}
+              style={{ flex: 1, font: 'inherit', color: 'var(--ink)', background: 'var(--bg)', border: '2px solid var(--border)', borderRadius: 12, padding: '0.4rem 0.7rem', minWidth: 0 }}
             />
-            <button
-              type="submit"
-              aria-label={t('chatSend')}
-              style={{ background: 'var(--primary)', color: '#fff', padding: '6px 12px' }}
-            >
-              <Send size={16} />
+            <button data-nosound className="btn btn-primary" type="submit" style={{ padding: '0.4rem 1rem' }}>
+              {t('chatSend')}
             </button>
           </form>
         </div>
       )}
-    </div>
+    </>
   );
 }

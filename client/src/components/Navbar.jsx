@@ -1,45 +1,55 @@
-import { Link } from 'react-router-dom';
-import { Sun, Moon, Languages } from 'lucide-react';
+import { useState } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Sun, Moon, Volume2, VolumeX } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { isMuted, toggleMuted } from '../sound';
+
+// الصفحات وأقسام كل صفحة (يظهر القسم في الشريط الفرعي عندما تكونين في تلك الصفحة)
+const PAGES = [
+  { path: '/', label: 'navHome', sections: [['about', 'navAbout'], ['skills', 'navSkills'], ['projects', 'navProjects'], ['contact', 'navContact']] },
+  { path: '/nothing', label: 'navNothing', sections: [] },
+  { path: '/prize', label: 'navPrize', sections: [['prize-intro', 'prizeSecIntro'], ['prize-secrets', 'prizeSecSecrets'], ['prize-code', 'prizeSecCode']] },
+];
 
 export default function Navbar() {
-  const { theme, toggleTheme, toggleLang, t } = useApp();
+  const { t, theme, toggleTheme, toggleLang } = useApp();
+  const { pathname } = useLocation();
+  const [muted, setMuted] = useState(isMuted());
+  const current = PAGES.find((p) => p.path === pathname);
 
   return (
-    <header style={{ borderBottom: '1px solid var(--border)', paddingBlock: '1rem' }}>
-      <nav className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-        <Link to="/" style={{ fontSize: '1.5rem', fontWeight: '700', color: 'var(--primary)', textDecoration: 'none' }}>
-          {t('brand')}
-        </Link>
-
-        <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-          <Link to="/" style={{ color: 'var(--ink)', textDecoration: 'none', fontWeight: '600' }}>
-            {t('navHome')}
-          </Link>
-          <Link to="/nothing" style={{ color: 'var(--muted)', textDecoration: 'none', fontSize: '0.9rem' }}>
-            {t('navNothing')}
-          </Link>
-
-          <button
-            onClick={toggleTheme}
-            aria-label={t('themeToggle')}
-            className="glow-box"
-            style={{ padding: '0.5rem', display: 'flex', alignItems: 'center', color: theme === 'light' ? 'var(--accent-yellow)' : 'var(--primary-light)' }}
-          >
-            {theme === 'light' ? <Sun size={20} /> : <Moon size={20} />}
+    <header className="navbar">
+      <div className="container">
+        <Link to="/" className="brand">{t('brand')}</Link>
+        <nav className="nav-links nav-pages">
+          {PAGES.map((p) => (
+            <NavLink key={p.path} to={p.path} end className={({ isActive }) => (isActive ? 'active' : '')}>
+              {t(p.label)}
+            </NavLink>
+          ))}
+        </nav>
+        <div className="nav-tools">
+          <button className="icon-btn" onClick={() => setMuted(toggleMuted())}
+            title={muted ? t('soundOff') : t('soundOn')} aria-label={muted ? t('soundOff') : t('soundOn')}>
+            {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
           </button>
-
-          <button
-            onClick={toggleLang}
-            aria-label={t('langToggle')}
-            className="glow-box"
-            style={{ padding: '0.5rem 0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--ink)', fontWeight: '600' }}
-          >
-            <Languages size={18} color="var(--accent-red)" />
-            <span>{t('langButton')}</span>
+          <button className="icon-btn" onClick={toggleTheme} title={t('themeToggle')} aria-label={t('themeToggle')}>
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+          <button onClick={toggleLang} title={t('langToggle')} aria-label={t('langToggle')}>
+            {t('langButton')}
           </button>
         </div>
-      </nav>
+      </div>
+      {current && current.sections.length > 0 && (
+        <div className="subnav">
+          <nav className="container">
+            {current.sections.map(([id, label]) => (
+              <Link key={id} to={{ pathname: current.path, hash: '#' + id }}>{t(label)}</Link>
+            ))}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
