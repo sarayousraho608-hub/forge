@@ -1,5 +1,6 @@
 import { useApp } from '../context/AppContext';
 import useFetch from '../hooks/useFetch';
+import { dataUrl } from '../api';
 import SectionTitle from './SectionTitle';
 
 const GROUPS = [['good', 'skillsGood'], ['learning', 'skillsLearning'], ['planned', 'skillsPlanned']];
@@ -7,7 +8,7 @@ const label = (v, lang) => (typeof v === 'string' ? v : v[lang]);
 
 export default function Skills() {
   const { t, lang } = useApp();
-  const { data, loading, error } = useFetch('/data/skills.json');
+  const { data, loading, error } = useFetch(dataUrl('skills'));
   return (
     <section id="skills">
       <div className="container">

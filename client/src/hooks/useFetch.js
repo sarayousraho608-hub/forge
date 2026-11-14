@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 
 // Custom hook: يجلب JSON من رابط ويعيد { data, loading, error }
-// اليوم نجلب من public/data/*.json ، وغداً نغيّر الرابط إلى الخادم فقط.
+// إن كان الرابط null لا يجلب شيئاً.
 export default function useFetch(url) {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(Boolean(url));
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    if (!url) { setLoading(false); return undefined; }
     let cancelled = false;
     setLoading(true);
     setError(false);

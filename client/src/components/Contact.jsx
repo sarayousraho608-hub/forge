@@ -1,29 +1,41 @@
 import { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import SectionTitle from './SectionTitle';
+import { USE_API, postJson } from '../api';
 
 export default function Contact() {
   const { t } = useApp();
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [errors, setErrors] = useState({});
   const [sent, setSent] = useState(false);
+  const [busy, setBusy] = useState(false);
 
   const change = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     const err = {};
     if (!form.name.trim()) err.name = t('errName');
     if (!/^\S+@\S+\.\S+$/.test(form.email)) err.email = t('errEmail');
     if (form.message.trim().length < 10) err.message = t('errMessage');
     setErrors(err);
-    if (Object.keys(err).length === 0) {
-      // غداً: هنا نرسل الرسالة إلى الخادم (POST /api/messages)
-      setSent(true);
-      setForm({ name: '', email: '', message: '' });
-    } else {
-      setSent(false);
+    setSent(false);
+    if (Object.keys(err).length > 0) return;
+
+    if (USE_API) {
+      setBusy(true);
+      try {
+        const res = await postJson('/api/messages', form);
+        if (!res.ok) throw new Error('failed');
+      } catch {
+        setErrors({ message: t('sendFail') });
+        setBusy(false);
+        return;
+      }
+      setBusy(false);
     }
+    setSent(true);
+    setForm({ name: '', email: '', message: '' });
   };
 
   return (
@@ -46,7 +58,7 @@ export default function Contact() {
             <textarea id="message" name="message" rows="5" value={form.message} onChange={change} />
             {errors.message && <span className="err">{errors.message}</span>}
           </div>
-          <button className="btn btn-primary" type="submit">{t('formSend')}</button>
+          <button className="btn btn-primary" type="submit" disabled={busy}>{t('formSend')}</button>
           {sent && <p className="ok-msg">{t('formOk')}</p>}
         </form>
       </div>

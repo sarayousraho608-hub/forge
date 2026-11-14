@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import useFetch from '../hooks/useFetch';
+import { dataUrl } from '../api';
 import SectionTitle from './SectionTitle';
 import Modal from './Modal';
 
@@ -9,7 +10,7 @@ const FILTER_KEY = { all: 'filterAll', past: 'statusPast', current: 'statusCurre
 
 export default function Projects() {
   const { t, lang } = useApp();
-  const { data, loading, error } = useFetch('/data/projects.json');
+  const { data, loading, error } = useFetch(dataUrl('projects'));
   const [filter, setFilter] = useState('all');
   const [open, setOpen] = useState(null);
 
