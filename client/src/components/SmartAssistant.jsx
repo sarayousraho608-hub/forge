@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { unlockSecret } from '../hooks/useSecrets';
+import { SECRET_WORDS } from '../config';
 import { playSend, playReply } from '../sound';
 
 export default function SmartAssistant() {
@@ -20,10 +21,17 @@ export default function SmartAssistant() {
 
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
-  const toggle = () => {
-    // السر الأول: فتح المساعد (ذو النظارة) أثناء المظهر الساطع
-    if (!open && theme === 'light') unlockSecret('sunglasses');
-    setOpen(!open);
+  const toggle = () => setOpen(!open);
+
+  // ردّ تجريبي (غداً يحلّ محلّه الذكاء الاصطناعي الحقيقي من الخادم)
+  const reply = (text) => {
+    const low = text.toLowerCase();
+    if (SECRET_WORDS.some((w) => low.includes(w))) {
+      unlockSecret('ai');
+      return t('aiSecretReply');
+    }
+    if (/سر|تلميح|secret|hint|clue/i.test(text)) return t('aiHint');
+    return t('mockReply');
   };
 
   const send = (e) => {
@@ -37,7 +45,7 @@ export default function SmartAssistant() {
     // غداً: هنا نستدعي الخادم (POST /api/chat) بدل الرد التجريبي
     timers.current.push(setTimeout(() => {
       setTyping(false);
-      setMessages((m) => [...m, { from: 'bot', text: t('mockReply') }]);
+      setMessages((m) => [...m, { from: 'bot', text: reply(text) }]);
       playReply();
     }, 700));
   };
@@ -69,7 +77,7 @@ export default function SmartAssistant() {
     <>
       <button style={fab} className="lift" onClick={toggle}
         title={t('chatOpenTitle')} aria-label={t('chatOpenTitle')}>
-        {t('chatOpen')}
+        {theme === 'light' ? '😎' : '🙂'}
       </button>
 
       {open && (

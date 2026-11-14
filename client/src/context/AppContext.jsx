@@ -13,7 +13,7 @@ function readSaved(key, fallback) {
 }
 
 export function AppProvider({ children }) {
-  const [theme, setTheme] = useState(() => readSaved('theme', 'light'));
+  const [theme, setTheme] = useState(() => readSaved('theme', 'dark'));
   const [lang, setLang] = useState(() => readSaved('lang', 'ar'));
 
   useEffect(() => {

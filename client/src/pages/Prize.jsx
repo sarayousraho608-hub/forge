@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import useSecrets, { SECRET_IDS } from '../hooks/useSecrets';
+import useSecrets, { SECRET_IDS, markSeen } from '../hooks/useSecrets';
 import SectionTitle from '../components/SectionTitle';
 
-const ICONS = { sunglasses: '😎', nothing: '🕳️', console: '🕵️' };
+const ICONS = { sunglasses: '😎', nothing: '🕳️', ai: '🕵️' };
 
 // كود تجريبي محلي مؤقت — غداً يُستبدل بكود حقيقي من الخادم
 function demoCode() {
@@ -23,6 +23,7 @@ export default function Prize() {
   const { t } = useApp();
   const { found, count, total } = useSecrets();
   const [copied, setCopied] = useState(false);
+  useEffect(() => { markSeen(); }, [count]); // زيارة الصفحة تُخفي إشعار الأسرار الجديدة
   const done = count === total;
   const code = done ? demoCode() : null;
 

@@ -3,18 +3,20 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Sun, Moon, Volume2, VolumeX } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { isMuted, toggleMuted } from '../sound';
+import useSecrets from '../hooks/useSecrets';
 
 // الصفحات وأقسام كل صفحة (يظهر القسم في الشريط الفرعي عندما تكونين في تلك الصفحة)
 const PAGES = [
   { path: '/', label: 'navHome', sections: [['about', 'navAbout'], ['skills', 'navSkills'], ['projects', 'navProjects'], ['contact', 'navContact']] },
-  { path: '/nothing', label: 'navNothing', sections: [] },
   { path: '/prize', label: 'navPrize', sections: [['prize-intro', 'prizeSecIntro'], ['prize-secrets', 'prizeSecSecrets'], ['prize-code', 'prizeSecCode']] },
+  { path: '/nothing', label: 'navNothing', sections: [] },
 ];
 
 export default function Navbar() {
   const { t, theme, toggleTheme, toggleLang } = useApp();
   const { pathname } = useLocation();
   const [muted, setMuted] = useState(isMuted());
+  const { unseen } = useSecrets();
   const current = PAGES.find((p) => p.path === pathname);
 
   return (
@@ -25,6 +27,9 @@ export default function Navbar() {
           {PAGES.map((p) => (
             <NavLink key={p.path} to={p.path} end className={({ isActive }) => (isActive ? 'active' : '')}>
               {t(p.label)}
+              {p.path === '/prize' && unseen > 0 && (
+                <span className="notif" title={t('newSecretBadge')} aria-label={t('newSecretBadge')}>{unseen}</span>
+              )}
             </NavLink>
           ))}
         </nav>
