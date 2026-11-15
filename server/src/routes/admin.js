@@ -4,6 +4,7 @@ import Claim from '../models/Claim.js';
 import Message from '../models/Message.js';
 import PrizeCode from '../models/PrizeCode.js';
 import Setting from '../models/Setting.js';
+import { clearCache } from '../middleware/cache.js';
 
 const router = Router();
 router.use(adminAuth);
@@ -33,7 +34,14 @@ router.get('/messages', async (_req, res) => {
 router.put('/settings', async (req, res) => {
   if (typeof req.body?.available !== 'boolean') return res.status(400).json({ error: 'available must be boolean' });
   await Setting.findOneAndUpdate({ key: 'available' }, { value: req.body.available }, { upsert: true });
+  clearCache('/api/settings');
   res.json({ available: req.body.available });
+});
+
+// مسح كل الكاش (بعد تعديل المحتوى يدوياً في القاعدة)
+router.post('/cache/clear', (_req, res) => {
+  clearCache();
+  res.json({ ok: true });
 });
 
 export default router;

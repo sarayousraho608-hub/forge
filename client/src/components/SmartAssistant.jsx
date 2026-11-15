@@ -2,10 +2,12 @@ import { useState, useRef, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { unlockSecret } from '../hooks/useSecrets';
 import { SECRET_WORDS } from '../config';
+import { USE_API, postJson } from '../api';
+import { getVisitorId } from '../visitor';
 import { playSend, playReply } from '../sound';
 
 export default function SmartAssistant() {
-  const { t, theme } = useApp();
+  const { t, theme, lang } = useApp();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
@@ -34,20 +36,42 @@ export default function SmartAssistant() {
     return t('mockReply');
   };
 
-  const send = (e) => {
+  // مع الخادم: الذكاء الاصطناعي الحقيقي. بدونه: رد تجريبي محلي (المشروع 1)
+  const askServer = async (history) => {
+    try {
+      const res = await postJson('/api/chat', { messages: history, lang, visitorId: getVisitorId() });
+      if (res.ok && res.data?.reply) {
+        if (res.data.secret === 'ai') unlockSecret('ai');
+        return res.data.reply;
+      }
+      return res.status === 429 ? t('chatLimit') : t('chatError');
+    } catch {
+      return t('chatError');
+    }
+  };
+
+  const send = async (e) => {
     e.preventDefault();
     const text = input.trim();
-    if (!text) return;
+    if (!text || typing) return;
     playSend();
+    const history = [...messages, { from: 'me', text }].slice(-8)
+      .map((m) => ({ role: m.from === 'me' ? 'user' : 'assistant', content: m.text }));
     setMessages((m) => [...m, { from: 'me', text }]);
     setInput('');
     setTyping(true);
-    // غداً: هنا نستدعي الخادم (POST /api/chat) بدل الرد التجريبي
-    timers.current.push(setTimeout(() => {
+    if (USE_API) {
+      const answer = await askServer(history);
       setTyping(false);
-      setMessages((m) => [...m, { from: 'bot', text: reply(text) }]);
+      setMessages((m) => [...m, { from: 'bot', text: answer }]);
       playReply();
-    }, 700));
+    } else {
+      timers.current.push(setTimeout(() => {
+        setTyping(false);
+        setMessages((m) => [...m, { from: 'bot', text: reply(text) }]);
+        playReply();
+      }, 700));
+    }
   };
 
   const fab = {

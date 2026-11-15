@@ -3,6 +3,7 @@ import { useApp } from '../context/AppContext';
 import useSecrets, { SECRET_IDS, markSeen } from '../hooks/useSecrets';
 import useFetch from '../hooks/useFetch';
 import { USE_API, apiUrl, postJson } from '../api';
+import { getVisitorId } from '../visitor';
 import SectionTitle from '../components/SectionTitle';
 
 const ICONS = { sunglasses: '😎', nothing: '🕳️', ai: '🕵️' };
@@ -49,7 +50,11 @@ export default function Prize() {
     setBusy(true);
     setResult(null);
     try {
-      const res = await postJson('/api/claims', { email, secrets: found });
+      const visitorId = getVisitorId();
+      // نتأكد أن الخادم يعرف سرّيك الأول والثاني (قد تكونين كشفتِهما قبل ربط الخادم)
+      await Promise.all(found.filter((s) => s === 'sunglasses' || s === 'nothing')
+        .map((s) => postJson('/api/secrets', { visitorId, secret: s }).catch(() => null)));
+      const res = await postJson('/api/claims', { email, visitorId });
       const data = res.data || { status: 'error', reason: 'network' };
       if (data.status === 'accepted') {
         try { localStorage.setItem(CODE_KEY, data.code); } catch { /* تجاهل */ }

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import Claim from '../models/Claim.js';
 import PrizeCode from '../models/PrizeCode.js';
+import SecretProof from '../models/SecretProof.js';
 
 const router = Router();
 const limiter = rateLimit({ windowMs: 60 * 60 * 1000, limit: 10, standardHeaders: true, legacyHeaders: false });
@@ -26,7 +27,7 @@ router.get('/status', async (_req, res) => {
 
 router.post('/', limiter, async (req, res) => {
   const email = String(req.body?.email || '').trim().toLowerCase();
-  const secrets = Array.isArray(req.body?.secrets) ? req.body.secrets : [];
+  const visitorId = String(req.body?.visitorId || '');
   if (!EMAIL_RE.test(email) || email.length > 120) {
     return res.status(400).json({ status: 'error', reason: 'invalid_email' });
   }
@@ -37,8 +38,9 @@ router.post('/', limiter, async (req, res) => {
     return res.json({ status: 'rejected', reason });
   };
 
-  // 1) الأسرار الثلاثة (ملاحظة: يوم الرابع نجعل الخادم يتحقق من السر الثالث بنفسه)
-  if (!REQUIRED_SECRETS.every((s) => secrets.includes(s))) return reject('secrets_incomplete');
+  // 1) الأسرار الثلاثة: الخادم يملك دليل كل سر لهذا الزائر (السر الثالث لا يُسجَّل إلا من المساعد)
+  const proofs = /^[a-zA-Z0-9-]{16,64}$/.test(visitorId) ? await SecretProof.distinct('secret', { visitorId }) : [];
+  if (!REQUIRED_SECRETS.every((s) => proofs.includes(s))) return reject('secrets_incomplete');
 
   // 2) هذا البريد أخذ كوداً من قبل؟
   if (await Claim.exists({ emailKey: key, status: 'accepted' })) return reject('already_claimed');

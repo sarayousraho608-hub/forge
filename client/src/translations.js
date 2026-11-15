@@ -140,6 +140,8 @@ const translations = {
     claimReason_invalid_email: 'أدخلي بريداً صحيحاً.',
     claimReason_network: 'تعذّر الاتصال بالخادم. حاولي لاحقاً.',
     claimReason_error: 'حدث خطأ غير متوقع.',
+    chatError: 'عذراً، المساعد غير متاح الآن. حاولي بعد قليل.',
+    chatLimit: 'وصلنا إلى حدّ الأسئلة لهذا اليوم. جرّبي غداً أو راسليني عبر نموذج التواصل.',
   },
   en: {
     brand: 'Sara',
@@ -274,6 +276,8 @@ const translations = {
     claimReason_invalid_email: 'Enter a valid email.',
     claimReason_network: 'Could not reach the server. Try later.',
     claimReason_error: 'Something went wrong.',
+    chatError: 'Sorry, the assistant is unavailable right now. Please try again shortly.',
+    chatLimit: 'We reached the question limit for today. Try tomorrow or use the contact form.',
   },
 };
 

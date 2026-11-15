@@ -14,4 +14,6 @@ export const PROFILE = {
 
 // السر الثالث: كلمة مخبّأة في نبذة "من أنا" (في translations.js: aboutP1).
 // من يجدها ويكتبها للمساعد يكشف السر. (مؤقت: غداً ننقل التحقق إلى الخادم حتى لا تظهر في الكود.)
-export const SECRET_WORDS = ['قهوة', 'coffee'];
+
+export const SECRET_WORDS = import.meta.env.VITE_USE_API === 'true' ? [] : ['قهوة', 'coffee'];
+

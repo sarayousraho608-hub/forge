@@ -1,5 +1,7 @@
 import { useSyncExternalStore } from 'react';
 import { playSecret } from '../sound';
+import { USE_API, postJson } from '../api';
+import { getVisitorId, resetVisitorId } from '../visitor';
 
 // الأسرار الثلاثة. الحالة محفوظة في المتصفح (لاحقاً سنؤكدها من الخادم).
 export const SECRET_IDS = ['sunglasses', 'nothing', 'ai'];
@@ -31,6 +33,10 @@ export function unlockSecret(id) {
   const found = [...state.found, id];
   save(KEY, found);
   playSecret();
+  // مع الخادم: نسجّل دليل السر (السر الثالث يسجّله المساعد بنفسه)
+  if (USE_API && (id === 'sunglasses' || id === 'nothing')) {
+    postJson('/api/secrets', { visitorId: getVisitorId(), secret: id }).catch(() => {});
+  }
   set({ found, popup: { id } });
 }
 
@@ -47,6 +53,7 @@ export function markSeen() {
 if (typeof window !== 'undefined') {
   window.resetSecrets = () => {
     try { localStorage.removeItem(KEY); localStorage.removeItem(SEEN_KEY); } catch { /* تجاهل */ }
+    resetVisitorId();
     set({ found: [], seen: [], popup: null });
   };
 }
