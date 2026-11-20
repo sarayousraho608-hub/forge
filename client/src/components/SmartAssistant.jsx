@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
+import Character, { CharacterFace } from './Character';
 import { unlockSecret } from '../hooks/useSecrets';
 import { SECRET_WORDS } from '../config';
 import { USE_API, postJson } from '../api';
@@ -7,7 +8,7 @@ import { getVisitorId } from '../visitor';
 import { playSend, playReply } from '../sound';
 
 export default function SmartAssistant() {
-  const { t, theme, lang } = useApp();
+  const { t, lang } = useApp();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
@@ -26,9 +27,14 @@ export default function SmartAssistant() {
   const toggle = () => setOpen(!open);
 
   // ردّ تجريبي (غداً يحلّ محلّه الذكاء الاصطناعي الحقيقي من الخادم)
+  const norm = (x) => x.toLowerCase().replace(/[\u064B-\u0652\u0640]/g, '').replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
+  const isSecretWord = (text) => {
+    const tokens = norm(text).split(' ');
+    if (tokens.length > 2) return false; // رسالة قصيرة فقط
+    return tokens.some((tk) => SECRET_WORDS.some((w) => tk === norm(w) || tk === 'ال' + norm(w)));
+  };
   const reply = (text) => {
-    const low = text.toLowerCase();
-    if (SECRET_WORDS.some((w) => low.includes(w))) {
+    if (isSecretWord(text)) {
       unlockSecret('ai');
       return t('aiSecretReply');
     }
@@ -74,20 +80,14 @@ export default function SmartAssistant() {
     }
   };
 
-  const fab = {
-    position: 'fixed', insetInlineEnd: '1.2rem', bottom: '1.2rem', zIndex: 80,
-    width: 60, height: 60, borderRadius: '50%', fontSize: '1.9rem',
-    background: 'var(--surface)', border: '3px solid var(--primary)',
-    boxShadow: '5px 5px 0 var(--accent-yellow)',
-  };
   const win = {
-    position: 'fixed', insetInlineEnd: '1.2rem', bottom: '5.5rem', zIndex: 80,
+    position: 'fixed', insetInlineEnd: '1.2rem', bottom: '1rem', zIndex: 80,
     width: 'min(340px, 90vw)', height: 'min(460px, 70vh)', display: 'flex', flexDirection: 'column',
     overflow: 'hidden', color: 'var(--ink)',
   };
   const head = {
     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-    padding: '0.7rem 1rem', background: 'var(--grad)', color: '#fff', fontWeight: 700,
+    padding: '0.5rem 0.8rem', background: 'var(--grad)', color: '#fff', fontWeight: 700,
   };
   const bubble = (mine) => ({
     alignSelf: mine ? 'flex-end' : 'flex-start', maxWidth: '85%',
@@ -99,15 +99,16 @@ export default function SmartAssistant() {
 
   return (
     <>
-      <button style={fab} className="lift" onClick={toggle}
+      <button className={`char-btn${open ? ' gone' : ''}`} onClick={toggle} tabIndex={open ? -1 : 0}
+        style={open ? { transform: `translateX(${lang === 'ar' ? '-' : ''}170%)` } : undefined}
         title={t('chatOpenTitle')} aria-label={t('chatOpenTitle')}>
-        {theme === 'light' ? '😎' : '🙂'}
+        <Character />
       </button>
 
       {open && (
-        <div className="glow-box" style={win} role="dialog" aria-label={t('chatTitle')}>
+        <div className="glow-box chat-win" style={win} role="dialog" aria-label={t('chatTitle')}>
           <div style={head}>
-            <span>{t('chatTitle')}</span>
+            <CharacterFace />
             <button onClick={() => setOpen(false)}
               style={{ background: 'none', border: 'none', color: '#fff', fontWeight: 700 }}>
               {t('chatClose')}

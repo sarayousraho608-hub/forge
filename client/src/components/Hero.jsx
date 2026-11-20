@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import Avatar from './Avatar';
-import AvailabilityBadge from './AvailabilityBadge';
+import Sky from './Sky';
+import '../typography.css';
 
 export default function Hero() {
   const { t } = useApp();
@@ -9,7 +9,6 @@ export default function Hero() {
     <section id="home" className="hero">
       <div className="container">
         <div>
-          <AvailabilityBadge />
           <h1>
             {t('heroHello')} <span className="name">{t('heroName')}</span>
             <br />
@@ -21,7 +20,7 @@ export default function Hero() {
             <Link to="/#contact" className="btn btn-ghost">{t('heroCta2')}</Link>
           </div>
         </div>
-        <div className="avatar-wrap"><Avatar /></div>
+        <div className="avatar-wrap"><Sky /></div>
       </div>
     </section>
   );

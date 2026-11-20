@@ -4,7 +4,7 @@ export const PROFILE = {
   email: 'sarayousraho608@gmail.com',
   github: 'https://github.com/sarayousraho608-hub',
   // ✏️ ضعي رابط ملفك الحقيقي: في تطبيق LinkedIn ← ملفك ← "مشاركة" ← نسخ الرابط
-  linkedin: 'https://www.linkedin.com/in/sara-yousra-houdan-44642644b/',
+  linkedin: 'https://www.linkedin.com/in/YOUR-PROFILE',
   // اجعليها false عندما تكونين مشغولة. لاحقاً سنجلبها من الخادم.
   available: true,
   // الصور: ضعي الملفات داخل مجلد client/public بهذه الأسماء
@@ -14,6 +14,5 @@ export const PROFILE = {
 
 // السر الثالث: كلمة مخبّأة في نبذة "من أنا" (في translations.js: aboutP1).
 // من يجدها ويكتبها للمساعد يكشف السر. (مؤقت: غداً ننقل التحقق إلى الخادم حتى لا تظهر في الكود.)
-
-export const SECRET_WORDS = import.meta.env.VITE_USE_API === 'true' ? [] : ['قهوة', 'coffee'];
-
+// مشروع 1 فقط (بلا خادم): الكلمة السرية. مع الخادم تبقى فارغة لأن الخادم هو من يتحقق.
+export const SECRET_WORDS = import.meta.env.VITE_USE_API === 'true' ? [] : ['فن', 'الفن', 'art'];

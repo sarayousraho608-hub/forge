@@ -1,0 +1,8 @@
+# معلومات يعرفها المساعد عنكِ. سطر لكل معلومة، والأسطر التي تبدأ بـ # تُتجاهل.
+# لا تكتبي هنا شيئاً لا تريدين أن يقوله المساعد للزوار (لا عنوان ولا هاتف).
+# مثال (عدّليه): 
+Her name is Yousra Sara. She is a web developer and a first-year university student in Science and Technology (State Engineer track).
+She started coding at about 13 years old by building her first website.
+She also enjoys drawing, writing, reading and video editing.
+She likes making innovative sites that give users a complete experience (sound, visuals, interaction), not just code.
+Clients can contact her through the contact form on the site or the links in the footer.

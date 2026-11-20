@@ -1,0 +1,43 @@
+/* الشخصية المرسومة (زر المساعد) */
+:root { --char-size: 170px; }
+@media (max-width: 760px) { :root { --char-size: 120px; } }
+
+.char-btn {
+  position: fixed; bottom: -0.5rem; inset-inline-end: 0.6rem; z-index: 80;
+  width: var(--char-size); height: var(--char-size);
+  padding: 0; border: none; background: none; cursor: pointer;
+  filter: drop-shadow(0 6px 8px rgba(13, 15, 46, 0.45));
+  transition: transform 0.35s ease, opacity 0.3s !important;
+}
+.char-btn:not(.gone):hover { transform: translateY(-6px) scale(1.04); }
+.char-btn:focus-visible { outline: 3px solid var(--accent-yellow); border-radius: 18px; }
+
+.char { position: relative; width: 100%; height: 100%; pointer-events: none; }
+.char img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  visibility: hidden; user-select: none; -webkit-user-drag: none;
+}
+.char img.on { visibility: visible; }
+
+/* الحالة الساكنة: جسم يتنفس + وجه فوقه (عينان / رمشة / نظارة) */
+.char-idle { position: absolute; inset: 0; transform-origin: 50% 94%; animation: breathe 3.8s ease-in-out infinite !important; }
+.char-idle.off { display: none; }
+@keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.012, 1.02); } }
+
+/* لا تغطي الشخصية نهاية الصفحة */
+footer.footer { padding-bottom: calc(var(--char-size) * 0.75 + 1rem); }
+
+.char-btn.gone { opacity: 0; pointer-events: none; }
+
+/* وجهها في رأس المحادثة */
+.char-face { position: relative; display: block; width: 46px; height: 46px; border-radius: 50%; overflow: hidden;
+  background: rgba(255, 255, 255, 0.22); border: 2px solid rgba(255, 255, 255, 0.85); }
+.char-face-in { position: absolute; width: 110px; height: 110px; left: -32px; top: -22px; }
+.char-face-in img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.chat-win { animation: chatIn 0.3s ease !important; }
+@keyframes chatIn { from { opacity: 0; transform: translateY(24px) scale(0.96); } to { opacity: 1; transform: none; } }
+
+/* الشخصية الكبيرة في الواجهة وفي "من أنا" */
+.hero-char { width: min(340px, 75vw); aspect-ratio: 1; filter: drop-shadow(0 14px 18px rgba(13, 15, 46, 0.35)); }
+.char-about { width: min(360px, 80vw); aspect-ratio: 1; margin-inline: auto; filter: drop-shadow(0 10px 14px rgba(13, 15, 46, 0.3)); }
+.photo-slot.is-char { border: none; box-shadow: none; background: none; aspect-ratio: auto; }

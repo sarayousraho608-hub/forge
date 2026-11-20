@@ -1,0 +1,47 @@
+/* ===== نظام خطوط موحّد =====
+   بدل عشرات الأحجام المتفرقة (0.72 / 0.78 / 0.85 / 0.88 / 0.9 / 0.92 / 0.95 ...) صار للموقع سلّم واحد صغير.
+   كل حجم "مرن" (clamp) فينتقل بنعومة بين الهاتف والحاسوب بدل القفزات، ولا تحتاجين تغيير الأرقام في كل مكان:
+   عدّلي القيم في :root فقط فيتغير الموقع كله معاً.
+   (البادئة html body تجعل هذه القواعد تغلب القديمة في index.css أياً كان ترتيب التحميل.) */
+:root {
+  --fs-xs: 0.8rem;                                   /* وسوم، حالات، ملاحظات صغيرة */
+  --fs-sm: 0.92rem;                                  /* تفاصيل، تواريخ، قائمة فرعية */
+  --fs-md: 1rem;                                     /* النص العادي والأزرار */
+  --fs-lg: 1.15rem;                                  /* مقدمات وعناوين صغيرة */
+  --fs-h3: clamp(1.35rem, 1rem + 1.2vw, 1.7rem);     /* عناوين البطاقات والنوافذ */
+  --fs-h2: clamp(1.75rem, 1.2rem + 2.2vw, 2.4rem);   /* عناوين الأقسام */
+  --fs-hero: clamp(2rem, 1.2rem + 3.4vw, 3.1rem);    /* العنوان الرئيسي */
+  --fs-big: clamp(2.6rem, 1.5rem + 5vw, 4.2rem);     /* "خصم 50%" */
+  --lh-body: 1.85;                                   /* العربية الجميلة تحتاج سطراً أرحب */
+  --lh-head: 1.5;
+}
+/* الإنجليزية: خط أقل ارتفاعاً بصرياً، نضيّق السطر قليلاً */
+:root:lang(en), :root[dir='ltr'] { --lh-body: 1.65; --lh-head: 1.35; }
+
+/* الهاتف لا "يكبّر" الفقرات الطويلة وحده (سبب شائع لأن يبدو الخط أطول في مكان وأقصر في آخر) */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html body { font-size: 1rem; line-height: var(--lh-body); overflow-wrap: break-word; font-synthesis: none; }
+
+/* العناوين */
+html body .hero h1 { font-size: var(--fs-hero); line-height: var(--lh-head); text-wrap: balance; }
+html body .section-title h2 { font-size: var(--fs-h2); line-height: var(--lh-head); text-wrap: balance; }
+html body .boom-text h2 { font-size: var(--fs-h2); }
+html body .modal-title { font-size: var(--fs-h3); line-height: var(--lh-head); }
+html body .prize-card .big { font-size: var(--fs-big); }
+html body .secret-count { font-size: var(--fs-h2); }
+html body .skill h3, html body .project h3, html body .group-title { font-size: var(--fs-lg); line-height: var(--lh-head); }
+html body .footer-name { font-size: var(--fs-lg); }
+html body .brand { font-size: var(--fs-lg); }
+
+/* النصوص: عرض سطر مريح (لا أسطر طويلة جداً ولا قصيرة جداً) */
+html body .hero p { font-size: var(--fs-lg); max-width: 34rem; text-wrap: pretty; }
+html body .about-text p { font-size: var(--fs-md); max-width: 62ch; text-wrap: pretty; }
+html body .section-title p { font-size: var(--fs-md); }
+html body .stat b { font-size: var(--fs-h3); }
+html body .btn, html body .nav-links a, html body .field label { font-size: var(--fs-md); }
+
+/* الصغير: حجمان فقط */
+html body .skill .group, html body .status, html body .tags span, html body .click-hint, html body .note { font-size: var(--fs-xs); }
+html body .dates, html body .progress-row, html body .subnav a, html body .field .err, html body .meter-row b,
+html body .project .thumb, html body .badge { font-size: var(--fs-sm); }
+html body .code { font-size: clamp(1.2rem, 0.8rem + 1.8vw, 1.6rem); }
